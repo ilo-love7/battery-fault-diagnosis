@@ -1,0 +1,48 @@
+{
+  "accuracy": 0.7678571428571429,
+  "weighted_f1": 0.7592443941467523,
+  "macro_f1": 0.772617293048391,
+  "per_class_recall": {
+    "normal": 0.47368421052631576,
+    "self_discharge": 0.7916666666666666,
+    "high_resistance": 0.9666666666666667,
+    "low_capacity": 1.0
+  },
+  "confusion_matrix": [
+    [
+      18,
+      15,
+      0,
+      5
+    ],
+    [
+      3,
+      19,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      29,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      20
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "model": "xgb_stats",
+  "split": "charge_vehicle_grouped_8_2",
+  "n_train": 448,
+  "n_test": 112,
+  "metadata_note": "n_train/n_test 由划分确定性修正（te.sum() 索引和 bug）；划分 448/112 对任意同 seed 重跑不变"
+}

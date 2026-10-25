@@ -1,0 +1,46 @@
+{
+  "accuracy": 0.6428571428571429,
+  "weighted_f1": 0.6495907866931466,
+  "macro_f1": 0.6212635432642358,
+  "per_class_recall": {
+    "normal": 0.7894736842105263,
+    "self_discharge": 0.3333333333333333,
+    "high_resistance": 0.6666666666666666,
+    "low_capacity": 0.7
+  },
+  "confusion_matrix": [
+    [
+      15,
+      1,
+      0,
+      3
+    ],
+    [
+      4,
+      4,
+      0,
+      4
+    ],
+    [
+      0,
+      0,
+      10,
+      5
+    ],
+    [
+      3,
+      0,
+      0,
+      7
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "model": "cnn_fusion_vehicle_agg",
+  "split": "vehicle_mean_over_charge_segments",
+  "n_vehicles": 56
+}

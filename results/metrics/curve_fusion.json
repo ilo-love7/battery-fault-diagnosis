@@ -1,0 +1,49 @@
+{
+  "accuracy": 0.875,
+  "weighted_f1": 0.8741893352549089,
+  "macro_f1": 0.8658678734983739,
+  "per_class_recall": {
+    "normal": 0.868421052631579,
+    "self_discharge": 0.875,
+    "high_resistance": 0.9666666666666667,
+    "low_capacity": 0.75
+  },
+  "confusion_matrix": [
+    [
+      33,
+      2,
+      1,
+      2
+    ],
+    [
+      2,
+      21,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      29,
+      1
+    ],
+    [
+      3,
+      1,
+      1,
+      15
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "model": "cnn_fusion",
+  "split": "charge_vehicle_grouped_8_2",
+  "best_val_acc": 0.875,
+  "n_train": 448,
+  "n_test": 112,
+  "metadata_note": "n_train/n_test 由划分确定性修正（te.sum() 索引和 bug）；划分 448/112 对任意同 seed 重跑不变"
+}

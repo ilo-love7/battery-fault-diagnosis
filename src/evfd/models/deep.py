@@ -71,6 +71,30 @@ class LSTMNet(nn.Module):
         return self.head(out[:, -1, :])   # 取窗口末步（流式语义）
 
 
+class CurveFusionNet(nn.Module):
+    """曲线热图 CNN + 数值特征 MLP 双分支融合（论文 BatteryMultiModalCNN 的 CPU 规模版）。
+
+    image: [B, 1, H, W] 残差热图（单体×时间条纹）；
+    num:   [B, D] 统计/形状特征。
+    """
+
+    def __init__(self, num_dim: int, n_classes: int = 4, img_ch: int = 1):
+        super().__init__()
+        self.img_branch = nn.Sequential(
+            nn.Conv2d(img_ch, 8, 3, stride=2, padding=1), nn.BatchNorm2d(8), nn.ReLU(),
+            nn.Conv2d(8, 16, 3, stride=2, padding=1), nn.BatchNorm2d(16), nn.ReLU(),
+            nn.Conv2d(16, 32, 3, stride=2, padding=1), nn.BatchNorm2d(32), nn.ReLU(),
+            nn.AdaptiveAvgPool2d(1), nn.Flatten(),               # → 32
+        )
+        self.num_branch = nn.Sequential(
+            nn.Linear(num_dim, 64), nn.ReLU(), nn.Linear(64, 32), nn.ReLU(),
+        )
+        self.head = nn.Sequential(nn.Linear(64, 64), nn.ReLU(), nn.Linear(64, n_classes))
+
+    def forward(self, image, num):
+        return self.head(torch.cat([self.img_branch(image), self.num_branch(num)], dim=1))
+
+
 def build_windows(
     series: np.ndarray, spans: list[tuple[int, int]], labels: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray]:
