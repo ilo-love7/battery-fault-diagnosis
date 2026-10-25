@@ -1,0 +1,29 @@
+{
+  "feature_names": [
+    "soc_mean",
+    "soc_std",
+    "soc_min",
+    "current_mean",
+    "current_std",
+    "sumvolt_mean",
+    "sumvolt_std",
+    "temp_max",
+    "temp_min",
+    "temp_spread",
+    "dt_max_abs",
+    "cell_spread_mean",
+    "cell_spread_max",
+    "cell_spread_std",
+    "dev_min_mean",
+    "dev_min_max",
+    "dev_min_p90",
+    "dev_max_mean",
+    "cell_var_max",
+    "minvolt_slope",
+    "maxvolt_slope",
+    "minvolt_min",
+    "mode_charge",
+    "chem_ncm",
+    "n_cells"
+  ]
+}

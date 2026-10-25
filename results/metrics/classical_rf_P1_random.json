@@ -1,0 +1,36 @@
+{
+  "accuracy": 0.987012987012987,
+  "weighted_f1": 0.9870422329254138,
+  "macro_f1": 0.986976859709401,
+  "per_class_recall": {
+    "healthy": 0.9882352941176471,
+    "overdischarge": 0.9863013698630136,
+    "short_circuit": 0.9863013698630136
+  },
+  "confusion_matrix": [
+    [
+      84,
+      1,
+      0
+    ],
+    [
+      1,
+      72,
+      0
+    ],
+    [
+      0,
+      1,
+      72
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2"
+  ],
+  "model": "rf",
+  "split": "P1_random",
+  "n_train": 805,
+  "n_test": 231
+}

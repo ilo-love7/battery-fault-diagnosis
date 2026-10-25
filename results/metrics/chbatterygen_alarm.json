@@ -1,0 +1,586 @@
+{
+  "variants": {
+    "V1_full_normal_pool": {
+      "vehicle_level": {
+        "NCM": {
+          "normal_vehicles_evaluated": 40,
+          "normal_fa_vehicle": 0.2,
+          "normal_fa_vehicle_t1": 0.075,
+          "normal_fa_vehicle_t2": 0.175,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.3,
+              "t1": 0.15,
+              "t2": 0.25
+            },
+            "high_resistance": {
+              "combined": 0.7,
+              "t1": 0.7,
+              "t2": 0.6333333333333333
+            },
+            "low_capacity": {
+              "combined": 0.9333333333333333,
+              "t1": 0.9333333333333333,
+              "t2": 0.9
+            }
+          }
+        },
+        "LFP": {
+          "normal_vehicles_evaluated": 40,
+          "normal_fa_vehicle": 0.15,
+          "normal_fa_vehicle_t1": 0.1,
+          "normal_fa_vehicle_t2": 0.1,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.275,
+              "t1": 0.175,
+              "t2": 0.25
+            },
+            "high_resistance": {
+              "combined": 1.0,
+              "t1": 0.8333333333333334,
+              "t2": 1.0
+            },
+            "low_capacity": {
+              "combined": 0.5333333333333333,
+              "t1": 0.3,
+              "t2": 0.4
+            }
+          }
+        }
+      },
+      "segment_level": {
+        "NCM": {
+          "normal_segments_evaluated": 120,
+          "normal_fa_segment": 0.075
+        },
+        "LFP": {
+          "normal_segments_evaluated": 120,
+          "normal_fa_segment": 0.05
+        }
+      }
+    },
+    "V2_design_test_split": {
+      "vehicle_level": {
+        "NCM": {
+          "normal_vehicles_evaluated": 20,
+          "normal_fa_vehicle": 0.4,
+          "normal_fa_vehicle_t1": 0.3,
+          "normal_fa_vehicle_t2": 0.35,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.45,
+              "t1": 0.275,
+              "t2": 0.45
+            },
+            "high_resistance": {
+              "combined": 0.9,
+              "t1": 0.8,
+              "t2": 0.8666666666666667
+            },
+            "low_capacity": {
+              "combined": 0.9666666666666667,
+              "t1": 0.9666666666666667,
+              "t2": 0.9666666666666667
+            }
+          }
+        },
+        "LFP": {
+          "normal_vehicles_evaluated": 20,
+          "normal_fa_vehicle": 0.4,
+          "normal_fa_vehicle_t1": 0.4,
+          "normal_fa_vehicle_t2": 0.3,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.4,
+              "t1": 0.325,
+              "t2": 0.375
+            },
+            "high_resistance": {
+              "combined": 1.0,
+              "t1": 0.8666666666666667,
+              "t2": 1.0
+            },
+            "low_capacity": {
+              "combined": 0.6666666666666666,
+              "t1": 0.4666666666666667,
+              "t2": 0.6333333333333333
+            }
+          }
+        }
+      },
+      "segment_level": {
+        "NCM": {
+          "normal_segments_evaluated": 60,
+          "normal_fa_segment": 0.15
+        },
+        "LFP": {
+          "normal_segments_evaluated": 60,
+          "normal_fa_segment": 0.16666666666666666
+        }
+      }
+    }
+  },
+  "settings": {
+    "t1_quantile": 0.9995,
+    "t1_persistence": 3,
+    "t1_cooldown": 10,
+    "t2_quantile": 0.995,
+    "t2_stats_high": [
+      "cell_spread_max",
+      "dev_min_p90",
+      "cell_var_max",
+      "temp_max"
+    ],
+    "t2_stats_low": [],
+    "rules": [
+      {
+        "name": "ALM_OT",
+        "column": "MAX_TEMP",
+        "direction": "high"
+      },
+      {
+        "name": "ALM_TR",
+        "column": "d_temp3",
+        "direction": "high"
+      },
+      {
+        "name": "ALM_UV",
+        "column": "MIN_CELL_VOLT",
+        "direction": "low"
+      },
+      {
+        "name": "ALM_SPREAD",
+        "column": "spread",
+        "direction": "high"
+      },
+      {
+        "name": "ALM_DEV",
+        "column": "dev_min",
+        "direction": "high"
+      }
+    ]
+  },
+  "rule_class_matrix": {
+    "V1_full_normal_pool": {
+      "NCM": {
+        "ALM_UV": {
+          "normal": 1,
+          "self_discharge": 3,
+          "high_resistance": 1,
+          "low_capacity": 3
+        },
+        "T2:temp_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "T2:cell_spread_max": {
+          "normal": 2,
+          "self_discharge": 1,
+          "high_resistance": 21,
+          "low_capacity": 65
+        },
+        "T2:cell_var_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 0,
+          "low_capacity": 22
+        },
+        "ALM_DEV": {
+          "normal": 2,
+          "self_discharge": 2,
+          "high_resistance": 2,
+          "low_capacity": 6
+        },
+        "T2:dev_min_p90": {
+          "normal": 2,
+          "self_discharge": 4,
+          "high_resistance": 3,
+          "low_capacity": 9
+        },
+        "ALM_SPREAD": {
+          "normal": 1,
+          "self_discharge": 1,
+          "high_resistance": 22,
+          "low_capacity": 68
+        },
+        "ALM_TR": {
+          "normal": 1,
+          "self_discharge": 0,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "ALM_OT": {
+          "normal": 0,
+          "self_discharge": 1,
+          "high_resistance": 0,
+          "low_capacity": 1
+        }
+      },
+      "LFP": {
+        "ALM_UV": {
+          "normal": 2,
+          "self_discharge": 5,
+          "high_resistance": 19,
+          "low_capacity": 5
+        },
+        "ALM_SPREAD": {
+          "normal": 1,
+          "self_discharge": 1,
+          "high_resistance": 46,
+          "low_capacity": 1
+        },
+        "T2:cell_spread_max": {
+          "normal": 2,
+          "self_discharge": 2,
+          "high_resistance": 56,
+          "low_capacity": 2
+        },
+        "T2:dev_min_p90": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 28,
+          "low_capacity": 3
+        },
+        "T2:temp_max": {
+          "normal": 2,
+          "self_discharge": 4,
+          "high_resistance": 3,
+          "low_capacity": 7
+        },
+        "T2:cell_var_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 21,
+          "low_capacity": 7
+        },
+        "ALM_OT": {
+          "normal": 1,
+          "self_discharge": 2,
+          "high_resistance": 3,
+          "low_capacity": 5
+        },
+        "ALM_DEV": {
+          "normal": 0,
+          "self_discharge": 3,
+          "high_resistance": 23,
+          "low_capacity": 1
+        }
+      }
+    },
+    "V2_design_test_split": {
+      "NCM": {
+        "ALM_UV": {
+          "normal": 2,
+          "self_discharge": 1,
+          "high_resistance": 0,
+          "low_capacity": 3
+        },
+        "T2:cell_var_max": {
+          "normal": 4,
+          "self_discharge": 10,
+          "high_resistance": 3,
+          "low_capacity": 29
+        },
+        "T2:temp_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "ALM_DEV": {
+          "normal": 6,
+          "self_discharge": 9,
+          "high_resistance": 3,
+          "low_capacity": 15
+        },
+        "ALM_SPREAD": {
+          "normal": 7,
+          "self_discharge": 5,
+          "high_resistance": 34,
+          "low_capacity": 77
+        },
+        "T2:cell_spread_max": {
+          "normal": 8,
+          "self_discharge": 5,
+          "high_resistance": 37,
+          "low_capacity": 78
+        },
+        "T2:dev_min_p90": {
+          "normal": 4,
+          "self_discharge": 10,
+          "high_resistance": 3,
+          "low_capacity": 19
+        },
+        "ALM_TR": {
+          "normal": 1,
+          "self_discharge": 0,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "ALM_OT": {
+          "normal": 0,
+          "self_discharge": 1,
+          "high_resistance": 0,
+          "low_capacity": 1
+        }
+      },
+      "LFP": {
+        "T2:cell_var_max": {
+          "normal": 3,
+          "self_discharge": 9,
+          "high_resistance": 30,
+          "low_capacity": 21
+        },
+        "T2:temp_max": {
+          "normal": 6,
+          "self_discharge": 5,
+          "high_resistance": 3,
+          "low_capacity": 10
+        },
+        "ALM_UV": {
+          "normal": 3,
+          "self_discharge": 5,
+          "high_resistance": 14,
+          "low_capacity": 4
+        },
+        "ALM_SPREAD": {
+          "normal": 8,
+          "self_discharge": 13,
+          "high_resistance": 62,
+          "low_capacity": 9
+        },
+        "T2:cell_spread_max": {
+          "normal": 9,
+          "self_discharge": 14,
+          "high_resistance": 72,
+          "low_capacity": 10
+        },
+        "T2:dev_min_p90": {
+          "normal": 8,
+          "self_discharge": 17,
+          "high_resistance": 29,
+          "low_capacity": 6
+        },
+        "ALM_DEV": {
+          "normal": 5,
+          "self_discharge": 15,
+          "high_resistance": 22,
+          "low_capacity": 5
+        },
+        "ALM_OT": {
+          "normal": 2,
+          "self_discharge": 4,
+          "high_resistance": 3,
+          "low_capacity": 7
+        }
+      }
+    }
+  },
+  "thresholds_t1": {
+    "NCM_charge": {
+      "ALM_OT": {
+        "column": "MAX_TEMP",
+        "direction": "high",
+        "threshold": 47.0,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 1.0,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "MIN_CELL_VOLT",
+        "direction": "low",
+        "threshold": 3.536984999999999,
+        "kind": "quantile"
+      },
+      "ALM_SPREAD": {
+        "column": "spread",
+        "direction": "high",
+        "threshold": 0.06899999999999995,
+        "kind": "quantile"
+      },
+      "ALM_DEV": {
+        "column": "dev_min",
+        "direction": "high",
+        "threshold": 0.047999999999999605,
+        "kind": "quantile"
+      }
+    },
+    "NCM_discharge": {
+      "ALM_OT": {
+        "column": "MAX_TEMP",
+        "direction": "high",
+        "threshold": 38.0,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 2.0,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "MIN_CELL_VOLT",
+        "direction": "low",
+        "threshold": 3.4148654999999994,
+        "kind": "quantile"
+      },
+      "ALM_SPREAD": {
+        "column": "spread",
+        "direction": "high",
+        "threshold": 0.07926900000000038,
+        "kind": "quantile"
+      },
+      "ALM_DEV": {
+        "column": "dev_min",
+        "direction": "high",
+        "threshold": 0.05699999999999994,
+        "kind": "quantile"
+      }
+    },
+    "LFP_charge": {
+      "ALM_OT": {
+        "column": "MAX_TEMP",
+        "direction": "high",
+        "threshold": 30.0,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 1.0,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "MIN_CELL_VOLT",
+        "direction": "low",
+        "threshold": 3.272,
+        "kind": "quantile"
+      },
+      "ALM_SPREAD": {
+        "column": "spread",
+        "direction": "high",
+        "threshold": 0.06499999999999995,
+        "kind": "quantile"
+      },
+      "ALM_DEV": {
+        "column": "dev_min",
+        "direction": "high",
+        "threshold": 0.04300000000000015,
+        "kind": "quantile"
+      }
+    },
+    "LFP_discharge": {
+      "ALM_OT": {
+        "column": "MAX_TEMP",
+        "direction": "high",
+        "threshold": 30.0,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 1.0,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "MIN_CELL_VOLT",
+        "direction": "low",
+        "threshold": 3.0879934999999885,
+        "kind": "quantile"
+      },
+      "ALM_SPREAD": {
+        "column": "spread",
+        "direction": "high",
+        "threshold": 0.1600030000000003,
+        "kind": "quantile"
+      },
+      "ALM_DEV": {
+        "column": "dev_min",
+        "direction": "high",
+        "threshold": 0.08000225000000052,
+        "kind": "quantile"
+      }
+    }
+  },
+  "thresholds_t2": {
+    "NCM_charge": {
+      "cell_spread_max": {
+        "direction": "high",
+        "threshold": 0.06702500000000018
+      },
+      "dev_min_p90": {
+        "direction": "high",
+        "threshold": 0.04235774999999977
+      },
+      "cell_var_max": {
+        "direction": "high",
+        "threshold": 0.018823535455150645
+      },
+      "temp_max": {
+        "direction": "high",
+        "threshold": 44.23500000000003
+      }
+    },
+    "NCM_discharge": {
+      "cell_spread_max": {
+        "direction": "high",
+        "threshold": 0.10395500000000028
+      },
+      "dev_min_p90": {
+        "direction": "high",
+        "threshold": 0.03594449999999999
+      },
+      "cell_var_max": {
+        "direction": "high",
+        "threshold": 0.01079726378940625
+      },
+      "temp_max": {
+        "direction": "high",
+        "threshold": 37.805
+      }
+    },
+    "LFP_charge": {
+      "cell_spread_max": {
+        "direction": "high",
+        "threshold": 0.0646300000000001
+      },
+      "dev_min_p90": {
+        "direction": "high",
+        "threshold": 0.041815000000000116
+      },
+      "cell_var_max": {
+        "direction": "high",
+        "threshold": 0.005391787477777807
+      },
+      "temp_max": {
+        "direction": "high",
+        "threshold": 29.605000000000004
+      }
+    },
+    "LFP_discharge": {
+      "cell_spread_max": {
+        "direction": "high",
+        "threshold": 0.20416
+      },
+      "dev_min_p90": {
+        "direction": "high",
+        "threshold": 0.0315874999999999
+      },
+      "cell_var_max": {
+        "direction": "high",
+        "threshold": 0.004342676983468749
+      },
+      "temp_max": {
+        "direction": "high",
+        "threshold": 30.61
+      }
+    }
+  }
+}

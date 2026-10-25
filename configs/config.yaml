@@ -1,0 +1,62 @@
+# 项目 A1 配置：路径 / 划分 / 告警阈值
+paths:
+  mendeley_multi: "D:/项目/02_数据集/01_国际公开集/EV_FaultDiag_Mendeley/原始数据/Multiple Classification - EV Battery Faults Dataset.xlsx"
+  mendeley_simple: "D:/项目/02_数据集/01_国际公开集/EV_FaultDiag_Mendeley/原始数据/Simple Classification - EV Battery Faults Dataset.xlsx"
+  chbatterygen_root: "D:/项目/02_数据集/02_国内公开集/CH-BatteryGen/原始数据/V1.0"
+  chbatterygen_faults_xlsx: "D:/项目/02_数据集/02_国内公开集/CH-BatteryGen/原始数据/faults.details.-.LFP.batteries.xlsx"
+  results_dir: "results"
+  figures_dir: "results/figures"
+  metrics_dir: "results/metrics"
+  models_dir: "results/models"
+  reports_dir: "reports"
+
+# 类别名（Mendeley 三分类）
+classes:
+  0: "healthy"
+  1: "overdischarge"
+  2: "short_circuit"
+
+# CH-BatteryGen 车级标签 → 整数
+ch_classes:
+  normal: 0
+  self_discharge: 1
+  high_resistance: 2
+  low_capacity: 3
+
+splits:
+  random_state: 42
+  test_frac: 0.2
+  val_frac: 0.1          # 深度模型从训练段里再切
+  block_purge: 8         # 时序分块划分时，块边界两侧丢弃的步数（防边界泄漏）
+  block_train_frac: 0.6  # 每类连续轨迹按 60/20/20 分块
+  block_val_frac: 0.2
+
+# 告警阈值设计（在健康段上按分位数定标，目标误报率见下）
+alarm:
+  ambient_temp_k: 298.15
+  target_false_alarm_rate: 0.005   # 健康段步级误报率目标 0.5%
+  healthy_quantile: 0.995          # 阈值 = 健康段指标 99.5% 分位（与上者对应）
+  # 物理规则兜底（仿真发散特征，独立于分位数标定）
+  short_voltage_v: 0.5             # V < 0.5V 判电压塌陷（内短路）
+  soc_overdischarge: 0.0           # SoC < 0 判过放电
+  temp_celsius_alarm: 330          # 56.9°C 过温告警线（约健康段上限 431K 以内时再由分位数细化）
+  persistence: 3                   # 连续 N 步越限才触发告警（抗单点抖动）
+  cooldown: 10                     # 同一告警类型触发后 N 步冷却，避免重复计数
+
+deep_model:
+  window: 16          # 滑窗长度（步）
+  stride: 1
+  channels: 3         # V, T, SoC（z-score 标准化）
+  cnn_channels: [32, 64, 64]
+  lstm_hidden: 64
+  epochs: 60
+  batch_size: 64
+  lr: 0.001
+  early_stop_patience: 10
+
+chbatterygen_eval:
+  # 跨库验证抽样规模（CPU 时限内的代表性子集；全量留档在 02_数据集）
+  normal_vehicles_per_chem: 40
+  fault_vehicles_per_chem: 100   # 全部故障车（30+30+40）
+  segments_per_vehicle: 3
+  max_rows_per_segment: 400      # 每段最多取的行（10s 采样，够算统计特征）

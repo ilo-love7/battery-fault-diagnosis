@@ -1,0 +1,312 @@
+{
+  "main": {
+    "healthy": {
+      "steps": 424,
+      "step_false_alarm_rate": 0.0047169811320754715,
+      "n_events": 41,
+      "events_per_rule": {
+        "ALM_OT": 7,
+        "ALM_TR": 8,
+        "ALM_UV": 4,
+        "ALM_VD": 5,
+        "ALM_SOC": 8,
+        "ALM_ISC": 1,
+        "ALM_OD": 8
+      },
+      "eval_steps": 424,
+      "note": "in-sample（全健康块定标，同一块统计误报）",
+      "healthy_events_in_block": 2
+    },
+    "fault_blocks": [
+      {
+        "class": "overdischarge",
+        "start": 424,
+        "end": 788,
+        "length": 364,
+        "detected": true,
+        "latency_steps": 81,
+        "rules_fired": [
+          "ALM_OT",
+          "ALM_TR",
+          "ALM_UV",
+          "ALM_VD",
+          "ALM_SOC",
+          "ALM_OD"
+        ],
+        "n_events_per_rule": {
+          "ALM_OT": 2,
+          "ALM_TR": 3,
+          "ALM_UV": 4,
+          "ALM_VD": 4,
+          "ALM_SOC": 4,
+          "ALM_ISC": 0,
+          "ALM_OD": 4
+        }
+      },
+      {
+        "class": "short_circuit",
+        "start": 788,
+        "end": 1152,
+        "length": 364,
+        "detected": true,
+        "latency_steps": 2,
+        "rules_fired": [
+          "ALM_OT",
+          "ALM_TR",
+          "ALM_VD",
+          "ALM_SOC",
+          "ALM_ISC",
+          "ALM_OD"
+        ],
+        "n_events_per_rule": {
+          "ALM_OT": 4,
+          "ALM_TR": 4,
+          "ALM_UV": 0,
+          "ALM_VD": 1,
+          "ALM_SOC": 4,
+          "ALM_ISC": 1,
+          "ALM_OD": 4
+        }
+      }
+    ],
+    "rule_class_matrix": {
+      "ALM_OT": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_TR": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_UV": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 0
+      },
+      "ALM_VD": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_SOC": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_ISC": {
+        "healthy": 0,
+        "overdischarge": 0,
+        "short_circuit": 1
+      },
+      "ALM_OD": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      }
+    },
+    "thresholds": {
+      "ALM_OT": {
+        "column": "temp",
+        "direction": "high",
+        "threshold": 430.59605728549997,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 8.195510158500012,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "volt",
+        "direction": "low",
+        "threshold": 2.8273344222050003,
+        "kind": "quantile"
+      },
+      "ALM_VD": {
+        "column": "d_volt3",
+        "direction": "low",
+        "threshold": -0.15327755799999965,
+        "kind": "quantile"
+      },
+      "ALM_SOC": {
+        "column": "soc",
+        "direction": "low",
+        "threshold": 0.8716206499895016,
+        "kind": "quantile"
+      },
+      "ALM_ISC": {
+        "column": "volt",
+        "direction": "low",
+        "threshold": 0.5,
+        "kind": "hard"
+      },
+      "ALM_OD": {
+        "column": "soc",
+        "direction": "low",
+        "threshold": 0.0,
+        "kind": "hard"
+      }
+    }
+  },
+  "sensitivity_calib60": {
+    "healthy": {
+      "steps": 424,
+      "step_false_alarm_rate": 0.17058823529411765,
+      "n_events": 42,
+      "events_per_rule": {
+        "ALM_OT": 9,
+        "ALM_TR": 7,
+        "ALM_UV": 4,
+        "ALM_VD": 5,
+        "ALM_SOC": 8,
+        "ALM_ISC": 1,
+        "ALM_OD": 8
+      },
+      "eval_steps": 170,
+      "note": "out-of-sample（前60%定标，其后40%统计误报，含深放电热瞬态）",
+      "healthy_events_in_block": 1
+    },
+    "fault_blocks": [
+      {
+        "class": "overdischarge",
+        "start": 424,
+        "end": 788,
+        "length": 364,
+        "detected": true,
+        "latency_steps": 53,
+        "rules_fired": [
+          "ALM_OT",
+          "ALM_TR",
+          "ALM_UV",
+          "ALM_VD",
+          "ALM_SOC",
+          "ALM_OD"
+        ],
+        "n_events_per_rule": {
+          "ALM_OT": 4,
+          "ALM_TR": 3,
+          "ALM_UV": 4,
+          "ALM_VD": 4,
+          "ALM_SOC": 4,
+          "ALM_ISC": 0,
+          "ALM_OD": 4
+        }
+      },
+      {
+        "class": "short_circuit",
+        "start": 788,
+        "end": 1152,
+        "length": 364,
+        "detected": true,
+        "latency_steps": 2,
+        "rules_fired": [
+          "ALM_OT",
+          "ALM_TR",
+          "ALM_VD",
+          "ALM_SOC",
+          "ALM_ISC",
+          "ALM_OD"
+        ],
+        "n_events_per_rule": {
+          "ALM_OT": 4,
+          "ALM_TR": 4,
+          "ALM_UV": 0,
+          "ALM_VD": 1,
+          "ALM_SOC": 4,
+          "ALM_ISC": 1,
+          "ALM_OD": 4
+        }
+      }
+    ],
+    "rule_class_matrix": {
+      "ALM_OT": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_TR": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_UV": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 0
+      },
+      "ALM_VD": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_SOC": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      },
+      "ALM_ISC": {
+        "healthy": 0,
+        "overdischarge": 0,
+        "short_circuit": 1
+      },
+      "ALM_OD": {
+        "healthy": 0,
+        "overdischarge": 1,
+        "short_circuit": 1
+      }
+    },
+    "thresholds": {
+      "ALM_OT": {
+        "column": "temp",
+        "direction": "high",
+        "threshold": 365.8164602805,
+        "kind": "quantile"
+      },
+      "ALM_TR": {
+        "column": "d_temp3",
+        "direction": "high",
+        "threshold": 8.633648602500022,
+        "kind": "quantile"
+      },
+      "ALM_UV": {
+        "column": "volt",
+        "direction": "low",
+        "threshold": 2.906363608065,
+        "kind": "quantile"
+      },
+      "ALM_VD": {
+        "column": "d_volt3",
+        "direction": "low",
+        "threshold": -0.14896738387999978,
+        "kind": "quantile"
+      },
+      "ALM_SOC": {
+        "column": "soc",
+        "direction": "low",
+        "threshold": 1.8225122230700008,
+        "kind": "quantile"
+      },
+      "ALM_ISC": {
+        "column": "volt",
+        "direction": "low",
+        "threshold": 0.5,
+        "kind": "hard"
+      },
+      "ALM_OD": {
+        "column": "soc",
+        "direction": "low",
+        "threshold": 0.0,
+        "kind": "hard"
+      }
+    }
+  },
+  "settings": {
+    "persistence": 3,
+    "cooldown": 10,
+    "healthy_quantile": 0.995,
+    "sampling_note": "行序=时间步（数据未给绝对时间）"
+  }
+}
