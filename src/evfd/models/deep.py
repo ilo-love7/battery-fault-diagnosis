@@ -36,6 +36,30 @@ class CNN1D(nn.Module):
         return self.head(self.conv(x.transpose(1, 2)))
 
 
+class DilatedCNN(nn.Module):
+    """膨胀因果卷积（感受野 1+Σ(k-1)·d，默认 31 步），适配长窗（64 步）趋势特征。"""
+
+    def __init__(self, channels: int = 12, hidden=(32, 64, 64), n_classes: int = 3,
+                 dilations=(1, 2, 4, 8)):
+        super().__init__()
+        layers, in_c = [], channels
+        for h, d in zip(hidden * len(dilations), dilations):
+            layers += [
+                nn.Conv1d(in_c, h, kernel_size=3, padding=d, dilation=d),
+                nn.BatchNorm1d(h),
+                nn.ReLU(),
+            ]
+            in_c = h
+        self.conv = nn.Sequential(*layers)
+        self.head = nn.Sequential(
+            nn.AdaptiveMaxPool1d(1), nn.Flatten(),
+            nn.Linear(in_c, 64), nn.ReLU(), nn.Linear(64, n_classes),
+        )
+
+    def forward(self, x):           # x: [B, T, C]
+        return self.head(self.conv(x.transpose(1, 2)))
+
+
 class LSTMNet(nn.Module):
     def __init__(self, channels: int = 3, hidden: int = 64, n_classes: int = 3):
         super().__init__()
@@ -62,6 +86,7 @@ def train_deep(
     Xva: np.ndarray, yva: np.ndarray,
     epochs: int = 60, batch_size: int = 64, lr: float = 1e-3,
     patience: int = 10, seed: int = 42, verbose: bool = False,
+    class_weights: np.ndarray | None = None,
 ) -> dict:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -73,7 +98,8 @@ def train_deep(
     va_y = torch.from_numpy(yva)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=epochs)
-    lossf = nn.CrossEntropyLoss()
+    w = None if class_weights is None else torch.tensor(class_weights, dtype=torch.float32)
+    lossf = nn.CrossEntropyLoss(weight=w)
     best_acc, best_state, bad = -1.0, None, 0
     history = []
     for ep in range(epochs):

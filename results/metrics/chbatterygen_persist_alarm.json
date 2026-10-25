@@ -1,0 +1,46 @@
+{
+  "settings": {
+    "quantile": 0.995,
+    "feature": "veh_persist_dev"
+  },
+  "V1_full_normal_pool": {
+    "NCM": {
+      "threshold_v": 0.026600474893162387,
+      "normal_fa_vehicle": 0.025,
+      "detection": {
+        "self_discharge": 0.025,
+        "high_resistance": 0.0,
+        "low_capacity": 0.2
+      }
+    },
+    "LFP": {
+      "threshold_v": 0.01842756278286958,
+      "normal_fa_vehicle": 0.025,
+      "detection": {
+        "self_discharge": 0.0,
+        "high_resistance": 0.0,
+        "low_capacity": 0.03333333333333333
+      }
+    }
+  },
+  "V2_design_test_split": {
+    "NCM": {
+      "threshold_v": 0.019553958333333326,
+      "normal_fa_vehicle": 0.05,
+      "detection": {
+        "self_discharge": 0.225,
+        "high_resistance": 0.0,
+        "low_capacity": 0.4
+      }
+    },
+    "LFP": {
+      "threshold_v": 0.010013592014341556,
+      "normal_fa_vehicle": 0.05,
+      "detection": {
+        "self_discharge": 0.2,
+        "high_resistance": 0.0,
+        "low_capacity": 0.16666666666666666
+      }
+    }
+  }
+}

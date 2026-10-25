@@ -147,6 +147,48 @@ def diagnose_pack_stream(df: pd.DataFrame, chem: str, mode: str, cfg: dict) -> d
     return {"final": final, "t1_events": t1_events, "stats": stats}
 
 
+def diagnose_vehicle_stream(files: list[Path], chem: str, cfg: dict) -> dict:
+    """多段车级诊断：段级告警 + 跨段特征 + 车级四类分类。"""
+    from evfd.data.load_chbatterygen import (
+        add_pack_indicators,
+        segment_features,
+        vehicle_cross_features,
+    )
+
+    seg_recs = []
+    seg_reports = []
+    for p in files:
+        df = pd.read_csv(p)
+        mode = "discharge" if "discharge" in p.name.lower() else "charge"
+        ind = add_pack_indicators(df)
+        stats = segment_features(ind)
+        seg_recs.append({"ind": ind, "stats": stats, "mode": mode})
+        seg_reports.append((p.name, mode, stats))
+
+    vf = vehicle_cross_features(seg_recs)
+    vf["chem_ncm"] = 1.0 if chem == "NCM" else 0.0
+    vf["n_cells_mean"] = float(np.mean([
+        sum(1 for c in pd.read_csv(p, nrows=0).columns if c.startswith("VOLT_"))
+        for p in files
+    ]))
+    model = load_model(Path(cfg["paths"]["models_dir"]) / "xgb_chbatterygen_vehicle.joblib")
+    with open(Path(cfg["paths"]["metrics_dir"]) / "chbatterygen_vehicle_feature_names.json",
+              encoding="utf-8") as f:
+        feat_names = json.load(f)["feature_names"]
+    X = pd.DataFrame([vf])[feat_names]
+    proba = model.predict_proba(X.values)[0]
+    names = ["normal", "self_discharge", "high_resistance", "low_capacity"]
+    return {
+        "车级诊断": {n: float(p) for n, p in zip(names, proba)},
+        "段数": len(files),
+        "各段概要": [
+            {"segment": n, "mode": m, "cell_spread_max": s["cell_spread_max"],
+             "dev_min_p90": s["dev_min_p90"]}
+            for n, m, s in seg_reports
+        ],
+    }
+
+
 # ---------------- CLI ----------------
 
 def detect_and_load(path: Path) -> tuple[pd.DataFrame, str]:
@@ -196,7 +238,7 @@ def print_pack_report(out: dict, chem: str, mode: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="车端电池故障诊断小工具")
-    ap.add_argument("--input", type=str, help="输入 csv/xlsx 路径")
+    ap.add_argument("--input", type=str, nargs="+", help="输入 csv/xlsx 路径（多个同车文件 → 车级诊断）")
     ap.add_argument("--chem", choices=["NCM", "LFP"], default=None, help="包级流的化学体系")
     ap.add_argument("--mode", choices=["charge", "discharge"], default=None, help="包级流的工况")
     ap.add_argument("--out", type=str, default=None, help="标注结果输出 csv")
@@ -229,7 +271,20 @@ def main() -> None:
 
     if not args.input:
         ap.error("需要 --input 或 --demo")
-    path = Path(args.input)
+    paths = [Path(p) for p in args.input] if isinstance(args.input, list) else [Path(args.input)]
+    if len(paths) > 1:
+        # 多段 → 车级诊断（同一辆车的多个段文件）
+        chem = args.chem or ("NCM" if "ncm" in str(paths[0]).lower() else "LFP")
+        out = diagnose_vehicle_stream(paths, chem, cfg)
+        print(f"\n========== 车级诊断（{chem} · {out['段数']} 段） ==========")
+        diag = max(out["车级诊断"], key=out["车级诊断"].get)
+        print(f"  车级诊断: {diag}  "
+              f"({'，'.join(f'{k} {v:.0%}' for k, v in out['车级诊断'].items())})")
+        for s in out["各段概要"]:
+            print(f"    {s['segment']} ({s['mode']}): spread_max={s['cell_spread_max']:.3f} "
+                  f"dev_min_p90={s['dev_min_p90']:.3f}")
+        return
+    path = paths[0]
     df, kind = detect_and_load(path)
     if kind == "mendeley":
         out = diagnose_mendeley_stream(df, cfg)

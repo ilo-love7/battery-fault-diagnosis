@@ -1,0 +1,47 @@
+{
+  "accuracy": 0.8035714285714286,
+  "weighted_f1": 0.7990184140184141,
+  "macro_f1": 0.8114327789327789,
+  "per_class_recall": {
+    "normal": 0.5625,
+    "self_discharge": 0.875,
+    "high_resistance": 0.9166666666666666,
+    "low_capacity": 0.9166666666666666
+  },
+  "confusion_matrix": [
+    [
+      9,
+      5,
+      0,
+      2
+    ],
+    [
+      1,
+      14,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      11,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      11
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "model": "rf",
+  "split": "vehicle_level_stratified_8_2",
+  "n_vehicles_train": 224,
+  "n_vehicles_test": 56
+}

@@ -69,6 +69,38 @@ def add_pack_indicators(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def vehicle_cross_features(segs: list[dict]) -> dict[str, float]:
+    """跨段（车级）特征——攻自放电的关键：同一单体跨充电段持续偏低。
+
+    segs: 同一辆车的 seg_recs 字典列表（含 'ind'/'stats'/'mode'）。
+    机理：自放电单体在每个充电段都低于包中位数且偏差逐段累积，
+    正常包的最低单体则随工况轮换 —— 用「最深单体的跨段平均偏差」与
+    「最低单体身份一致性」区分二者。
+    """
+    charge_segs = [s for s in segs if s["mode"] == "charge"]
+    f: dict[str, float] = {}
+    devs: list[np.ndarray] = []
+    for s in charge_segs:
+        V = s["ind"][cell_voltage_cols(s["ind"])].values
+        med = np.median(V, axis=1, keepdims=True)
+        devs.append((med - V).mean(axis=0))       # [M] 单体跨时间的平均偏差深度
+    if devs:
+        D = np.stack(devs)                         # [n_seg, M]
+        prof = D.mean(axis=0)
+        deepest = int(np.argmax(prof))
+        f["veh_persist_dev"] = float(prof[deepest])          # 最深单体的跨段平均深度
+        f["veh_argmin_consistency"] = float(np.mean(D.argmax(axis=1) == deepest))
+        f["veh_dev_profile_std"] = float(prof.std())         # 包内偏差离散度
+        f["veh_n_charge_segments"] = float(len(devs))
+    # 段级统计量的车级聚合
+    stat_keys = list(segs[0]["stats"].keys())
+    for k in stat_keys:
+        vals = [s["stats"][k] for s in segs]
+        f[f"segmean_{k}"] = float(np.mean(vals))
+        f[f"segmax_{k}"] = float(np.max(vals))
+    return f
+
+
 def segment_features(df: pd.DataFrame) -> dict[str, float]:
     """段级统计特征（对应论文 12 维统计特征的思想，扩展为 18 维）。
 

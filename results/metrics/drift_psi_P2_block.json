@@ -1,0 +1,51 @@
+{
+  "soc": {
+    "psi": 1.8394835395635534,
+    "out_of_support": 0.0
+  },
+  "temp": {
+    "psi": 2.0888001630649136,
+    "out_of_support": 0.0
+  },
+  "volt": {
+    "psi": 1.4978636974294353,
+    "out_of_support": 0.0
+  },
+  "t_above_amb": {
+    "psi": 2.090246472978657,
+    "out_of_support": 0.0
+  },
+  "d_soc": {
+    "psi": 4.234009076871582,
+    "out_of_support": 0.0
+  },
+  "d_temp": {
+    "psi": 1.2160836747598827,
+    "out_of_support": 0.0
+  },
+  "d_volt": {
+    "psi": 0.527268561542805,
+    "out_of_support": 0.0
+  },
+  "volt_rollmean5": {
+    "psi": 1.4978015650343872,
+    "out_of_support": 0.0
+  },
+  "temp_rollmean5": {
+    "psi": 2.053801431384387,
+    "out_of_support": 0.0
+  },
+  "volt_rollstd5": {
+    "psi": 0.5558231511625824,
+    "out_of_support": 0.0
+  },
+  "temp_rollstd5": {
+    "psi": 1.9742081418972606,
+    "out_of_support": 0.0
+  },
+  "_summary": {
+    "max_psi_feature": "d_soc",
+    "max_psi": 4.234009076871582,
+    "mean_psi": 1.779580861426313
+  }
+}

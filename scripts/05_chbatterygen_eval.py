@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay
-from sklearn.model_selection import GroupShuffleSplit
+from sklearn.model_selection import GroupShuffleSplit, train_test_split
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -139,24 +139,53 @@ def main() -> None:
 
     alarm_rows = []
     per_variant = {}
-    for variant in ("V1_full_normal_pool", "V2_design_test_split"):
+    for variant in ("V1_full_normal_pool", "V2_design_test_split", "V3_perM_pool"):
         thresholds_t1, thresholds_t2 = {}, {}
         for chem in chems:
             for mode in ("charge", "discharge"):
-                if variant == "V1_full_normal_pool":
-                    design_segs = [s for s in seg_recs
-                                   if s["chem"] == chem and s["fault"] == "normal"
-                                   and s["mode"] == mode]
+                if variant == "V2_design_test_split":
+                    pool_sel = [s for s in seg_recs
+                                if s["chem"] == chem and s["fault"] == "normal"
+                                and s["mode"] == mode and s["is_design"]]
                 else:
-                    design_segs = [s for s in seg_recs
-                                   if s["chem"] == chem and s["fault"] == "normal"
-                                   and s["mode"] == mode and s["is_design"]]
-                if not design_segs:
+                    pool_sel = [s for s in seg_recs
+                                if s["chem"] == chem and s["fault"] == "normal"
+                                and s["mode"] == mode]
+                if not pool_sel:
                     continue
-                pool_df = pd.concat([s["ind"] for s in design_segs], ignore_index=True)
-                ts = design_thresholds(pool_df, PACK_SPECS, quantile=q_alarm, hard_rules=[])
-                thresholds_t1[f"{chem}_{mode}"] = ts.to_dict()
-                stat_df = pd.DataFrame([s["stats"] for s in design_segs])
+                # V3：按串数 M 分组定标（组内 ≥10 段才独立定标），不足回落合并池
+                # —— M 逐车变化（NCM 90-96 / LFP 27-124），极差类指标分位随 M 系统性偏移
+                if variant == "V3_perM_pool":
+                    ts_by_m, m_notes = {}, {}
+                    by_m: dict[int, list] = {}
+                    for s in pool_sel:
+                        by_m.setdefault(s["M"], []).append(s)
+                    for m, lst in by_m.items():
+                        if len(lst) >= 10:
+                            ts_by_m[m] = design_thresholds(
+                                pd.concat([x["ind"] for x in lst], ignore_index=True),
+                                PACK_SPECS, quantile=q_alarm, hard_rules=[])
+                            m_notes[m] = f"M{m}({len(lst)}段)"
+                    fb_ts = design_thresholds(
+                        pd.concat([x["ind"] for x in pool_sel], ignore_index=True),
+                        PACK_SPECS, quantile=q_alarm, hard_rules=[])
+                    thresholds_t1[f"{chem}_{mode}"] = {
+                        **{f"M{m}": t.to_dict() for m, t in ts_by_m.items()},
+                        "fallback": fb_ts.to_dict(), "groups": m_notes,
+                    }
+
+                    def pick_ts(m, _tbm=ts_by_m, _fb=fb_ts):
+                        return _tbm.get(m, _fb)
+                else:
+                    pool_df = pd.concat([s["ind"] for s in pool_sel], ignore_index=True)
+                    ts_pool = design_thresholds(
+                        pool_df, PACK_SPECS, quantile=q_alarm, hard_rules=[])
+                    thresholds_t1[f"{chem}_{mode}"] = ts_pool.to_dict()
+
+                    def pick_ts(m, _ts=ts_pool):
+                        return _ts
+                # Tier 2 段级包络（定标池同 variant）
+                stat_df = pd.DataFrame([s["stats"] for s in pool_sel])
                 seg_thr = {}
                 for col in SEG_STATS_HIGH:
                     seg_thr[col] = {"direction": "high",
@@ -169,6 +198,7 @@ def main() -> None:
                 for s in seg_recs:
                     if s["chem"] != chem or s["mode"] != mode:
                         continue
+                    ts = pick_ts(s["M"])
                     res, events = run_alarms(
                         s["ind"], ts, persistence=persist, cooldown=cooldown
                     )
@@ -201,7 +231,7 @@ def main() -> None:
         "t2_stats_low": SEG_STATS_LOW,
         "rules": PACK_SPECS,
     }}
-    for variant in ("V1_full_normal_pool", "V2_design_test_split"):
+    for variant in ("V1_full_normal_pool", "V2_design_test_split", "V3_perM_pool"):
         sub_all = alarm_df[alarm_df.variant == variant]
         vm = {"vehicle_level": {}, "segment_level": {}}
         for chem in chems:
@@ -238,7 +268,7 @@ def main() -> None:
         alarm_metrics["variants"][variant] = vm
 
     alarm_metrics["rule_class_matrix"] = {}
-    for variant in ("V1_full_normal_pool", "V2_design_test_split"):
+    for variant in ("V1_full_normal_pool", "V2_design_test_split", "V3_perM_pool"):
         rc = {}
         for _, row in alarm_df[(alarm_df.variant == variant) & alarm_df.alarm].iterrows():
             for r in row["t1_rules"]:
@@ -252,10 +282,11 @@ def main() -> None:
         alarm_metrics["rule_class_matrix"][variant] = rc
     alarm_metrics["thresholds_t1"] = per_variant["V1_full_normal_pool"]["thresholds_t1"]
     alarm_metrics["thresholds_t2"] = per_variant["V1_full_normal_pool"]["thresholds_t2"]
+    alarm_metrics["thresholds_t1_V3_perM"] = per_variant["V3_perM_pool"]["thresholds_t1"]
     save_metrics(alarm_metrics, mdir / "chbatterygen_alarm.json")
 
-    print("\n== 告警移植（两级 × 两定标方案） ==")
-    for variant in ("V1_full_normal_pool", "V2_design_test_split"):
+    print("\n== 告警移植（两级 × 三定标方案） ==")
+    for variant in ("V1_full_normal_pool", "V2_design_test_split", "V3_perM_pool"):
         vm = alarm_metrics["variants"][variant]
         print(f"  [{variant}]")
         for chem in chems:
@@ -323,7 +354,82 @@ def main() -> None:
     save_model(xgb, modir / "xgb_chbatterygen.joblib")
     save_metrics({"feature_names": feat_names}, mdir / "chbatterygen_feature_names.json")
 
-    # ---------- C) 图：一致性对比示例 ----------
+    # ---------- C) 跨段持久性告警 + 车级四分类（攻自放电） ----------
+    from evfd.data.load_chbatterygen import vehicle_cross_features
+
+    veh_recs = []
+    by_vehicle: dict[tuple, list] = {}
+    for s in seg_recs:
+        by_vehicle.setdefault((s["chem"], s["vin"]), []).append(s)
+    for (chem, vin), grp in by_vehicle.items():
+        vf = vehicle_cross_features(grp)
+        vf["chem_ncm"] = 1.0 if chem == "NCM" else 0.0
+        vf["n_cells_mean"] = float(np.mean([s["M"] for s in grp]))
+        veh_recs.append({
+            "chem": chem, "vin": vin, "fault": grp[0]["fault"],
+            "is_design": grp[0]["is_design"], "label": ch_map[grp[0]["fault"]],
+            **vf,
+        })
+    veh_df = pd.DataFrame(veh_recs)
+    veh_df.to_csv(mdir / "chbatterygen_vehicle_features.csv", index=False)
+
+    # 跨段持久性告警（Tier 3，车级）：最深单体跨段平均偏差 vs 正常车包络
+    persist_metrics = {"settings": {"quantile": 0.995,
+                                    "feature": "veh_persist_dev"}}
+    for variant, sel in [("V1_full_normal_pool", veh_df.fault == "normal"),
+                         ("V2_design_test_split",
+                          (veh_df.fault == "normal") & veh_df.is_design.astype(bool))]:
+        pm = {}
+        for chem in chems:
+            thr = float(np.quantile(
+                veh_df[(veh_df.chem == chem) & sel]["veh_persist_dev"], 0.995))
+            sub = veh_df[veh_df.chem == chem]
+            flag = sub["veh_persist_dev"] > thr
+            fa_mask = (sub.fault == "normal")
+            if variant == "V2_design_test_split":
+                fa_mask &= sub.is_design.astype(bool)
+            pm[chem] = {
+                "threshold_v": thr,
+                "normal_fa_vehicle": float(flag[fa_mask].mean()) if fa_mask.any() else 0.0,
+                "detection": {
+                    f: float(flag[sub.fault == f].mean())
+                    for f in FAULT_TYPES[1:] if (sub.fault == f).any()
+                },
+            }
+        persist_metrics[variant] = pm
+    save_metrics(persist_metrics, mdir / "chbatterygen_persist_alarm.json")
+    print("\n== 跨段持久性告警（车级，veh_persist_dev > 正常包络 q0.995） ==")
+    for variant in ("V1_full_normal_pool", "V2_design_test_split"):
+        print(f"  [{variant}]")
+        for chem in chems:
+            pm = persist_metrics[variant][chem]
+            print(f"    {chem}: 误报 {pm['normal_fa_vehicle']:.1%} | 检出 "
+                  f"{({k: f'{x:.0%}' for k, x in pm['detection'].items()})}")
+
+    # 车级四分类（一辆车一个样本，按类分层 8:2）
+    vf_feat_cols = [c for c in veh_df.columns
+                    if c not in ("chem", "vin", "fault", "is_design", "label")]
+    Xv = veh_df[vf_feat_cols].values
+    yv = veh_df["label"].values
+    Xv_tr, Xv_te, yv_tr, yv_te = train_test_split(
+        Xv, yv, test_size=0.2, random_state=seed, stratify=yv
+    )
+    for name, mdl in [("rf", train_rf(Xv_tr, yv_tr, seed)),
+                      ("xgb", train_xgb(Xv_tr, yv_tr, seed=seed))]:
+        pred = mdl.predict(Xv_te)
+        rep = classification_report_dict(yv_te, pred, {v: k for k, v in ch_map.items()})
+        rep.update({"model": name, "split": "vehicle_level_stratified_8_2",
+                    "n_vehicles_train": int(len(yv_tr)),
+                    "n_vehicles_test": int(len(yv_te))})
+        save_metrics(rep, mdir / f"chbatterygen_vehicle_{name}.json")
+        print(f"[CH 车级 {name}] acc={rep['accuracy']:.4f} wF1={rep['weighted_f1']:.4f} "
+              f"recall={ {k: round(v,3) for k,v in rep['per_class_recall'].items()} }")
+        if name == "xgb":
+            save_model(mdl, modir / "xgb_chbatterygen_vehicle.joblib")
+    save_metrics({"feature_names": vf_feat_cols},
+                 mdir / "chbatterygen_vehicle_feature_names.json")
+
+    # ---------- D) 图：一致性对比示例 ----------
     fig, axes = plt.subplots(1, 4, figsize=(15, 3.4), sharey=True)
     shown = {}
     for chem, fault, vin, segname, df in samples:

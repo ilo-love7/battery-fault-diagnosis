@@ -20,7 +20,7 @@ from evfd.data.features import apply_standardizer, fit_standardizer
 from evfd.data.load_mendeley import CLASS_NAMES, load_multi
 from evfd.evaluate.metrics import classification_report_dict, save_metrics
 from evfd.evaluate.splits import window_split_indices
-from evfd.models.deep import CNN1D, LSTMNet, build_windows, predict, train_deep
+from evfd.models.deep import CNN1D, DilatedCNN, LSTMNet, build_windows, predict, train_deep
 
 
 def main() -> None:
@@ -39,43 +39,44 @@ def main() -> None:
     series = df[POINT_FEATURES].values.astype(np.float32)   # [N, 12] 与经典模型同信息
     y_all = df["label"].values
 
-    W, stride = dm["window"], dm["stride"]
-
-    def make_split(kind: str):
-        if kind == "P1_random":
-            # 全轨迹滑窗后随机分层
-            spans = [(i, i + W) for i in range(0, len(series) - W + 1, stride)]
-            labels = np.array([y_all[b - 1] for _, b in spans])
-            rng = np.random.default_rng(seed)
-            idx = rng.permutation(len(spans))
-            n_te = int(len(idx) * cfg["splits"]["test_frac"])
-            n_va = int(len(idx) * cfg["splits"]["val_frac"])
-            te, va, tr = idx[:n_te], idx[n_te:n_te + n_va], idx[n_te + n_va:]
-            return {"train": [spans[i] for i in tr],
-                    "val": [spans[i] for i in va],
-                    "test": [spans[i] for i in te]}
-        return window_split_indices(
-            md.blocks, W, stride,
-            cfg["splits"]["block_train_frac"], cfg["splits"]["block_val_frac"],
-            purge=2,
-        )
+    stride = dm["stride"]
+    n_ch = len(POINT_FEATURES)
 
     for kind in ("P1_random", "P2_block"):
-        sp = make_split(kind)
-        # 标准化：以训练窗覆盖的行统计
-        tr_rows = np.concatenate([np.arange(a, b) for a, b in sp["train"]])
-        mu, sd = fit_standardizer(series[tr_rows])
-        z = apply_standardizer(series, mu, sd)
+        variants = [
+            ("cnn16", CNN1D(channels=n_ch, n_classes=3, window=16), 16),
+            ("dcnn64", DilatedCNN(channels=n_ch, n_classes=3), 64),
+            ("lstm64", LSTMNet(channels=n_ch, n_classes=3,
+                               hidden=dm["lstm_hidden"]), 64),
+        ]
+        for name, model_proto, W in variants:
+            # 每种窗长单独切窗
+            if kind == "P1_random":
+                spans = [(i, i + W) for i in range(0, len(series) - W + 1, stride)]
+                labels = np.array([y_all[b - 1] for _, b in spans])
+                rng = np.random.default_rng(seed)
+                idx = rng.permutation(len(spans))
+                n_te = int(len(idx) * cfg["splits"]["test_frac"])
+                n_va = int(len(idx) * cfg["splits"]["val_frac"])
+                te, va, tr = idx[:n_te], idx[n_te:n_te + n_va], idx[n_te + n_va:]
+                wsp = {"train": [spans[i] for i in tr],
+                       "val": [spans[i] for i in va],
+                       "test": [spans[i] for i in te]}
+            else:
+                wsp = window_split_indices(
+                    md.blocks, W, stride,
+                    cfg["splits"]["block_train_frac"], cfg["splits"]["block_val_frac"],
+                    purge=2,
+                )
+            tr_rows_w = np.concatenate([np.arange(a, b) for a, b in wsp["train"]])
+            mu_w, sd_w = fit_standardizer(series[tr_rows_w])
+            zw = apply_standardizer(series, mu_w, sd_w)
 
-        Xtr, ytr = build_windows(z, sp["train"], y_all)
-        Xva, yva = build_windows(z, sp["val"], y_all)
-        Xte, yte = build_windows(z, sp["test"], y_all)
+            Xtr, ytr = build_windows(zw, wsp["train"], y_all)
+            Xva, yva = build_windows(zw, wsp["val"], y_all)
+            Xte, yte = build_windows(zw, wsp["test"], y_all)
 
-        for name, model in [
-            ("cnn", CNN1D(channels=len(POINT_FEATURES), n_classes=3, window=W)),
-            ("lstm", LSTMNet(channels=len(POINT_FEATURES), n_classes=3,
-                             hidden=dm["lstm_hidden"])),
-        ]:
+            model = model_proto
             info = train_deep(
                 model, Xtr, ytr, Xva, yva,
                 epochs=dm["epochs"], batch_size=dm["batch_size"], lr=dm["lr"],

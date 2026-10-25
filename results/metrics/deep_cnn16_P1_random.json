@@ -1,0 +1,39 @@
+{
+  "accuracy": 0.9162995594713657,
+  "weighted_f1": 0.91659403611137,
+  "macro_f1": 0.916373481590873,
+  "per_class_recall": {
+    "healthy": 0.8352941176470589,
+    "overdischarge": 0.9253731343283582,
+    "short_circuit": 1.0
+  },
+  "confusion_matrix": [
+    [
+      71,
+      14,
+      0
+    ],
+    [
+      5,
+      62,
+      0
+    ],
+    [
+      0,
+      0,
+      75
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2"
+  ],
+  "model": "cnn16",
+  "split": "P1_random",
+  "window": 16,
+  "n_train_windows": 797,
+  "n_test_windows": 227,
+  "best_val_acc": 0.9203540086746216,
+  "epochs_run": 24
+}

@@ -119,6 +119,66 @@
           "normal_fa_segment": 0.16666666666666666
         }
       }
+    },
+    "V3_perM_pool": {
+      "vehicle_level": {
+        "NCM": {
+          "normal_vehicles_evaluated": 40,
+          "normal_fa_vehicle": 0.2,
+          "normal_fa_vehicle_t1": 0.075,
+          "normal_fa_vehicle_t2": 0.175,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.3,
+              "t1": 0.15,
+              "t2": 0.25
+            },
+            "high_resistance": {
+              "combined": 0.7,
+              "t1": 0.7,
+              "t2": 0.6333333333333333
+            },
+            "low_capacity": {
+              "combined": 0.9333333333333333,
+              "t1": 0.9333333333333333,
+              "t2": 0.9
+            }
+          }
+        },
+        "LFP": {
+          "normal_vehicles_evaluated": 40,
+          "normal_fa_vehicle": 0.175,
+          "normal_fa_vehicle_t1": 0.15,
+          "normal_fa_vehicle_t2": 0.1,
+          "fault_detection_recall_vehicle": {
+            "self_discharge": {
+              "combined": 0.525,
+              "t1": 0.45,
+              "t2": 0.25
+            },
+            "high_resistance": {
+              "combined": 1.0,
+              "t1": 0.8666666666666667,
+              "t2": 1.0
+            },
+            "low_capacity": {
+              "combined": 0.6333333333333333,
+              "t1": 0.5,
+              "t2": 0.4
+            }
+          }
+        }
+      },
+      "segment_level": {
+        "NCM": {
+          "normal_segments_evaluated": 120,
+          "normal_fa_segment": 0.075
+        },
+        "LFP": {
+          "normal_segments_evaluated": 120,
+          "normal_fa_segment": 0.058333333333333334
+        }
+      }
     }
   },
   "settings": {
@@ -377,6 +437,120 @@
           "low_capacity": 7
         }
       }
+    },
+    "V3_perM_pool": {
+      "NCM": {
+        "ALM_UV": {
+          "normal": 1,
+          "self_discharge": 3,
+          "high_resistance": 1,
+          "low_capacity": 3
+        },
+        "T2:temp_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "T2:cell_spread_max": {
+          "normal": 2,
+          "self_discharge": 1,
+          "high_resistance": 21,
+          "low_capacity": 65
+        },
+        "T2:cell_var_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 0,
+          "low_capacity": 22
+        },
+        "ALM_DEV": {
+          "normal": 2,
+          "self_discharge": 2,
+          "high_resistance": 2,
+          "low_capacity": 6
+        },
+        "T2:dev_min_p90": {
+          "normal": 2,
+          "self_discharge": 4,
+          "high_resistance": 3,
+          "low_capacity": 9
+        },
+        "ALM_SPREAD": {
+          "normal": 1,
+          "self_discharge": 1,
+          "high_resistance": 22,
+          "low_capacity": 68
+        },
+        "ALM_TR": {
+          "normal": 1,
+          "self_discharge": 0,
+          "high_resistance": 1,
+          "low_capacity": 1
+        },
+        "ALM_OT": {
+          "normal": 0,
+          "self_discharge": 1,
+          "high_resistance": 0,
+          "low_capacity": 1
+        }
+      },
+      "LFP": {
+        "ALM_UV": {
+          "normal": 2,
+          "self_discharge": 6,
+          "high_resistance": 20,
+          "low_capacity": 6
+        },
+        "ALM_SPREAD": {
+          "normal": 1,
+          "self_discharge": 4,
+          "high_resistance": 59,
+          "low_capacity": 4
+        },
+        "T2:cell_spread_max": {
+          "normal": 2,
+          "self_discharge": 2,
+          "high_resistance": 56,
+          "low_capacity": 2
+        },
+        "T2:dev_min_p90": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 28,
+          "low_capacity": 3
+        },
+        "T2:temp_max": {
+          "normal": 2,
+          "self_discharge": 4,
+          "high_resistance": 3,
+          "low_capacity": 7
+        },
+        "ALM_DEV": {
+          "normal": 1,
+          "self_discharge": 11,
+          "high_resistance": 27,
+          "low_capacity": 10
+        },
+        "T2:cell_var_max": {
+          "normal": 2,
+          "self_discharge": 3,
+          "high_resistance": 21,
+          "low_capacity": 7
+        },
+        "ALM_OT": {
+          "normal": 1,
+          "self_discharge": 3,
+          "high_resistance": 3,
+          "low_capacity": 7
+        },
+        "ALM_TR": {
+          "normal": 1,
+          "self_discharge": 6,
+          "high_resistance": 0,
+          "low_capacity": 0
+        }
+      }
     }
   },
   "thresholds_t1": {
@@ -580,6 +754,317 @@
       "temp_max": {
         "direction": "high",
         "threshold": 30.61
+      }
+    }
+  },
+  "thresholds_t1_V3_perM": {
+    "NCM_charge": {
+      "M96": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 47.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.536984999999999,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.06899999999999995,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.047999999999999605,
+          "kind": "quantile"
+        }
+      },
+      "fallback": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 47.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.536984999999999,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.06899999999999995,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.047999999999999605,
+          "kind": "quantile"
+        }
+      },
+      "groups": {
+        "96": "M96(80段)"
+      }
+    },
+    "NCM_discharge": {
+      "M96": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 38.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 2.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.4148654999999994,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.07926900000000038,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.05699999999999994,
+          "kind": "quantile"
+        }
+      },
+      "fallback": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 38.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 2.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.4148654999999994,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.07926900000000038,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.05699999999999994,
+          "kind": "quantile"
+        }
+      },
+      "groups": {
+        "96": "M96(40段)"
+      }
+    },
+    "LFP_charge": {
+      "M28": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 29.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.283,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.040000000000000036,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.015499999999999847,
+          "kind": "quantile"
+        }
+      },
+      "M124": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 30.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.269747499999999,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.06500000000000039,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.04312625000000113,
+          "kind": "quantile"
+        }
+      },
+      "fallback": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 30.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.272,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.06499999999999995,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.04300000000000015,
+          "kind": "quantile"
+        }
+      },
+      "groups": {
+        "28": "M28(18段)",
+        "124": "M124(62段)"
+      }
+    },
+    "LFP_discharge": {
+      "M124": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 30.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 0.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.189,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.09540150000000364,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.0474015000000036,
+          "kind": "quantile"
+        }
+      },
+      "fallback": {
+        "ALM_OT": {
+          "column": "MAX_TEMP",
+          "direction": "high",
+          "threshold": 30.0,
+          "kind": "quantile"
+        },
+        "ALM_TR": {
+          "column": "d_temp3",
+          "direction": "high",
+          "threshold": 1.0,
+          "kind": "quantile"
+        },
+        "ALM_UV": {
+          "column": "MIN_CELL_VOLT",
+          "direction": "low",
+          "threshold": 3.0879934999999885,
+          "kind": "quantile"
+        },
+        "ALM_SPREAD": {
+          "column": "spread",
+          "direction": "high",
+          "threshold": 0.1600030000000003,
+          "kind": "quantile"
+        },
+        "ALM_DEV": {
+          "column": "dev_min",
+          "direction": "high",
+          "threshold": 0.08000225000000052,
+          "kind": "quantile"
+        }
+      },
+      "groups": {
+        "124": "M124(31段)"
       }
     }
   }

@@ -19,6 +19,7 @@ from evfd.config import load_config
 from evfd.data.features import POINT_FEATURES, add_point_features, fit_standardizer, apply_standardizer
 from evfd.data.load_mendeley import CLASS_NAMES, load_multi
 from evfd.evaluate.metrics import classification_report_dict, save_metrics
+from evfd.evaluate.drift import drift_report
 from evfd.evaluate.splits import split_block_contiguous, split_random_stratified
 from evfd.models.classical import feature_importance, save_model, train_rf, train_xgb
 
@@ -93,6 +94,13 @@ def main() -> None:
                 f"{model_name.upper()} · {split_name}",
                 fdir / f"fig_cm_{model_name}_{split_name}.png",
             )
+
+    # ---- PSI 漂移监控：P1/P2 测试段相对训练段的输入分布漂移 ----
+    for split_name, sp in splits.items():
+        rep = drift_report(sp.X_train, sp.X_test, POINT_FEATURES)
+        save_metrics(rep, mdir / f"drift_psi_{split_name}.json")
+        print(f"[PSI {split_name}] max={rep['_summary']['max_psi']:.2f} "
+              f"({rep['_summary']['max_psi_feature']}) mean={rep['_summary']['mean_psi']:.2f}")
 
     print("\n经典模型完成。")
 

@@ -1,0 +1,39 @@
+{
+  "accuracy": 1.0,
+  "weighted_f1": 1.0,
+  "macro_f1": 1.0,
+  "per_class_recall": {
+    "healthy": 1.0,
+    "overdischarge": 1.0,
+    "short_circuit": 1.0
+  },
+  "confusion_matrix": [
+    [
+      20,
+      0,
+      0
+    ],
+    [
+      0,
+      8,
+      0
+    ],
+    [
+      0,
+      0,
+      8
+    ]
+  ],
+  "confusion_labels": [
+    "0",
+    "1",
+    "2"
+  ],
+  "model": "dcnn64",
+  "split": "P2_block",
+  "window": 64,
+  "n_train_windows": 495,
+  "n_test_windows": 36,
+  "best_val_acc": 1.0,
+  "epochs_run": 12
+}
