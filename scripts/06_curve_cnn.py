@@ -104,6 +104,10 @@ def main() -> None:
     mu, sd = feat_all.values[tr].mean(0), feat_all.values[tr].std(0)
     sd[sd == 0] = 1.0
     Z = (feat_all.values - mu) / sd
+    # 保存推理元数据（诊断工具的 CNN 分支需要同款标准化）
+    save_metrics({"num_feature_names": list(feat_all.columns),
+                  "num_mu": mu.tolist(), "num_sd": sd.tolist()},
+                 mdir / "curve_fusion_meta.json")
 
     def train_fusion(model, epochs=40, batch=32, lr=1e-3, patience=8, zero_num=False):
         torch.manual_seed(seed); np.random.seed(seed)

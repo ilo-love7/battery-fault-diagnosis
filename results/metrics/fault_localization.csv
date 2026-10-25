@@ -1,0 +1,97 @@
+vin,ftype,sev,M,true0,top1,top3
+vin_1,Self-discharge,Mild,124,123,1,1
+vin_2,Self-discharge,Mild,124,103,0,0
+vin_4,Self-discharge,Mild,124,122,1,1
+vin_5,Self-discharge,Mild,124,121,0,0
+vin_6,Self-discharge,Mild,124,67,1,1
+vin_7,Self-discharge,Mild,124,13,0,0
+vin_8,Self-discharge,Severe,124,83,1,1
+vin_9,Self-discharge,Mild,124,107,1,1
+vin_10,Self-discharge,Severe,28,24,1,1
+vin_11,Self-discharge,Mild,28,17,1,1
+vin_12,Self-discharge,Mild,28,6,1,1
+vin_13,Self-discharge,Mild,28,10,1,1
+vin_14,Self-discharge,Mild,124,92,0,1
+vin_15,Self-discharge,Mild,28,11,0,0
+vin_16,Self-discharge,Mild,28,8,1,1
+vin_17,Self-discharge,Mild,124,63,1,1
+vin_18,Self-discharge,Mild,124,30,0,0
+vin_19,Self-discharge,Moderate,124,75,1,1
+vin_20,Self-discharge,Mild,28,2,1,1
+vin_21,Self-discharge,Moderate,28,12,1,1
+vin_22,Self-discharge,Moderate,124,121,1,1
+vin_23,Self-discharge,Mild,124,74,0,0
+vin_24,Self-discharge,Mild,28,4,1,1
+vin_25,Self-discharge,Mild,28,17,1,1
+vin_26,Self-discharge,Mild,28,21,1,1
+vin_27,Self-discharge,Severe,124,46,1,1
+vin_28,Self-discharge,Mild,124,111,1,1
+vin_29,Self-discharge,Mild,28,11,1,1
+vin_30,Self-discharge,Mild,124,87,0,0
+vin_31,Self-discharge,Moderate,124,71,1,1
+vin_32,Self-discharge,Mild,28,4,1,1
+vin_33,Self-discharge,Mild,28,9,1,1
+vin_34,Self-discharge,Mild,124,39,1,1
+vin_35,Self-discharge,Mild,28,27,1,1
+vin_36,Self-discharge,Mild,124,44,0,0
+vin_37,Self-discharge,Mild,124,91,0,0
+vin_38,Self-discharge,Severe,28,22,1,1
+vin_39,Self-discharge,Mild,28,7,1,1
+vin_40,Self-discharge,Mild,28,23,1,1
+vin_41,High Resistance,Moderate,28,22,1,1
+vin_42,High Resistance,Mild,28,13,1,1
+vin_43,High Resistance,Moderate,28,5,1,1
+vin_44,High Resistance,Moderate,28,1,1,1
+vin_45,High Resistance,Mild,28,23,1,1
+vin_46,High Resistance,Mild,28,18,1,1
+vin_47,High Resistance,Moderate,28,20,1,1
+vin_48,High Resistance,Moderate,28,6,1,1
+vin_49,High Resistance,Moderate,28,13,1,1
+vin_50,High Resistance,Moderate,28,24,1,1
+vin_51,High Resistance,Mild,28,23,1,1
+vin_52,High Resistance,Moderate,28,15,1,1
+vin_53,High Resistance,Moderate,28,25,1,1
+vin_54,High Resistance,Severe,28,10,1,1
+vin_55,High Resistance,Severe,28,4,1,1
+vin_56,High Resistance,Moderate,28,17,1,1
+vin_57,High Resistance,Moderate,28,4,1,1
+vin_58,High Resistance,Mild,28,6,1,1
+vin_59,High Resistance,Mild,28,14,1,1
+vin_60,High Resistance,Mild,28,4,1,1
+vin_61,High Resistance,Moderate,28,14,1,1
+vin_62,High Resistance,Moderate,28,13,1,1
+vin_63,High Resistance,Mild,28,16,1,1
+vin_64,High Resistance,Severe,28,22,1,1
+vin_65,High Resistance,Mild,28,12,1,1
+vin_66,High Resistance,Mild,28,19,1,1
+vin_67,High Resistance,Severe,28,6,1,1
+vin_68,High Resistance,Moderate,28,9,1,1
+vin_69,High Resistance,Moderate,28,15,1,1
+vin_70,High Resistance,Moderate,28,27,1,1
+vin_71,Low Capacity,Moderate,28,25,0,0
+vin_72,Low Capacity,Mild,28,1,0,0
+vin_73,Low Capacity,Severe,28,23,0,0
+vin_74,Low Capacity,Mild,28,20,0,0
+vin_76,Low Capacity,Moderate,28,16,0,0
+vin_77,Low Capacity,Mild,28,10,0,0
+vin_78,Low Capacity,Severe,28,1,0,0
+vin_80,Low Capacity,Mild,28,18,0,0
+vin_81,Low Capacity,Severe,28,15,0,0
+vin_82,Low Capacity,Severe,28,25,0,0
+vin_83,Low Capacity,Mild,28,26,0,0
+vin_84,Low Capacity,Moderate,28,3,0,0
+vin_85,Low Capacity,Moderate,28,15,0,0
+vin_86,Low Capacity,Moderate,28,25,0,0
+vin_87,Low Capacity,Severe,28,17,0,0
+vin_88,Low Capacity,Mild,28,1,0,0
+vin_89,Low Capacity,Moderate,28,27,0,0
+vin_90,Low Capacity,Mild,28,9,0,0
+vin_91,Low Capacity,Moderate,28,7,0,0
+vin_92,Low Capacity,Severe,28,23,0,0
+vin_93,Low Capacity,Mild,28,11,0,0
+vin_94,Low Capacity,Mild,28,10,0,0
+vin_95,Low Capacity,Moderate,28,4,0,0
+vin_96,Low Capacity,Severe,28,10,0,1
+vin_97,Low Capacity,Severe,28,15,0,0
+vin_98,Low Capacity,Severe,28,15,0,0
+vin_99,Low Capacity,Moderate,28,10,0,0

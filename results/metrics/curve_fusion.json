@@ -1,25 +1,25 @@
 {
-  "accuracy": 0.875,
-  "weighted_f1": 0.8741893352549089,
-  "macro_f1": 0.8658678734983739,
+  "accuracy": 0.8839285714285714,
+  "weighted_f1": 0.8841049644015239,
+  "macro_f1": 0.881328522744413,
   "per_class_recall": {
-    "normal": 0.868421052631579,
-    "self_discharge": 0.875,
+    "normal": 0.7894736842105263,
+    "self_discharge": 0.9583333333333334,
     "high_resistance": 0.9666666666666667,
-    "low_capacity": 0.75
+    "low_capacity": 0.85
   },
   "confusion_matrix": [
     [
-      33,
-      2,
-      1,
-      2
+      30,
+      5,
+      0,
+      3
     ],
     [
-      2,
-      21,
+      1,
+      23,
       0,
-      1
+      0
     ],
     [
       0,
@@ -28,10 +28,10 @@
       1
     ],
     [
-      3,
+      2,
       1,
-      1,
-      15
+      0,
+      17
     ]
   ],
   "confusion_labels": [
@@ -42,8 +42,7 @@
   ],
   "model": "cnn_fusion",
   "split": "charge_vehicle_grouped_8_2",
-  "best_val_acc": 0.875,
+  "best_val_acc": 0.8839285969734192,
   "n_train": 448,
-  "n_test": 112,
-  "metadata_note": "n_train/n_test 由划分确定性修正（te.sum() 索引和 bug）；划分 448/112 对任意同 seed 重跑不变"
+  "n_test": 112
 }

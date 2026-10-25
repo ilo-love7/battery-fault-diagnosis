@@ -7,6 +7,8 @@
 
 **v1.2（2026-10-26）**：全曲线形状路线（攻自放电）——单体电压残差热图（去包中位数，固定 ±50mV 物理尺度）+ SOC 对齐形状描述子 + CurveFusionNet（热图 CNN ⊕ 数值分支，论文 BatteryMultiModalCNN 的 CPU 规模版）。见 `scripts/06_curve_cnn.py` 与报告 §6.4。
 
+**v1.3（2026-10-26）**：故障明细深挖（`scripts/07_fault_details.py`）——用 faults.details.xlsx 解锁三个新能力：**故障单体定位**（放电最深单体画像：高内阻 100% / 自放电 74.4%，实证 xlsx cell id 为 0-based）、**故障分级**（论文 Task 2，轻/中/重 XGB 0.58 vs 基线 0.52）、**严重度分层检出**（高内阻轻度即 100%，重度自放电 75% vs 轻度 25%）。诊断工具接入曲线 CNN 分支。
+
 ## 数据
 
 | 数据集 | 角色 | 位置 |
@@ -38,6 +40,8 @@ D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\02_train_classical.py   #
 D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\03_train_deep.py        # cnn16 / dcnn64 / lstm64
 D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\04_alarm_design.py
 D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\05_chbatterygen_eval.py # 告警三方案 + 段级/车级分类
+D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\06_curve_cnn.py         # 曲线热图融合 CNN（充电段 560）
+D:\项目\venvs\flsoh-py312\Scripts\python.exe scripts\07_fault_details.py     # 单体定位 / 故障分级 / 严重度分层
 # 诊断小工具（单段或多段车级）
 D:\项目\venvs\flsoh-py312\Scripts\python.exe tools\diagnostic_tool.py --demo
 D:\项目\venvs\flsoh-py312\Scripts\python.exe tools\diagnostic_tool.py --input seg1.csv seg2.csv --chem LFP

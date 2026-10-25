@@ -126,7 +126,7 @@ def diagnose_pack_stream(df: pd.DataFrame, chem: str, mode: str, cfg: dict) -> d
         ]
         t1_rules = sorted({e["rule"] for e in t1_events})
 
-    # 段级四类诊断（XGB，特征需与训练一致）
+    # 段级四类诊断（XGB 统计特征 + 曲线热图融合 CNN（v1.2 最优段级模型），概率取均值）
     feats = dict(stats)
     feats["mode_charge"] = 1.0 if mode == "charge" else 0.0
     feats["chem_ncm"] = 1.0 if chem == "NCM" else 0.0
@@ -139,11 +139,46 @@ def diagnose_pack_stream(df: pd.DataFrame, chem: str, mode: str, cfg: dict) -> d
     proba = model.predict_proba(X.values)[0]
     names = ["normal", "self_discharge", "high_resistance", "low_capacity"]
 
+    cnn_proba = None
+    if mode == "charge":
+        try:
+            import torch
+
+            from evfd.data.curves import SHAPE_FEATURES, residual_heatmap, soc_aligned_shape
+            from evfd.models.deep import CurveFusionNet
+
+            net = CurveFusionNet(num_dim=len(SHAPE_FEATURES) + len(feat_names) - 3,
+                                 n_classes=4)
+            net.load_state_dict(
+                torch.load(Path(cfg["paths"]["models_dir"]) / "curve_fusion_net.pt",
+                           map_location="cpu"))
+            net.eval()
+            with open(Path(cfg["paths"]["metrics_dir"]) / "curve_fusion_meta.json",
+                      encoding="utf-8") as f:
+                cmeta = json.load(f)
+            num = dict(stats)
+            num.update(soc_aligned_shape(df))
+            num["mode_charge"] = 1.0
+            num["chem_ncm"] = 1.0 if chem == "NCM" else 0.0
+            num["n_cells"] = feats["n_cells"]
+            zv = (np.array([num[c] for c in cmeta["num_feature_names"]])
+                  - np.array(cmeta["num_mu"])) / np.array(cmeta["num_sd"])
+            with torch.no_grad():
+                cp = torch.softmax(net(
+                    torch.from_numpy(residual_heatmap(df))[None, None],
+                    torch.from_numpy(zv.astype(np.float32))[None]), dim=1)[0].numpy()
+            cnn_proba = {n: float(p) for n, p in zip(names, cp)}
+            proba = (proba + cp) / 2.0                 # 简单late-fusion 均值
+        except Exception as e:                         # 模型缺失/内存不足时降级
+            print(f"  (曲线 CNN 推理跳过: {type(e).__name__})")
+
     final = {
         "段级诊断": {n: float(p) for n, p in zip(names, proba)},
         "Tier1 步级告警": t1_rules,
         "Tier2 一致性异常": t2_fired,
     }
+    if cnn_proba is not None:
+        final["曲线CNN单独判别"] = cnn_proba
     return {"final": final, "t1_events": t1_events, "stats": stats}
 
 
@@ -225,6 +260,10 @@ def print_pack_report(out: dict, chem: str, mode: str) -> None:
     f = out["final"]
     diag = max(f["段级诊断"], key=f["段级诊断"].get)
     print(f"  段级诊断: {diag}  ({'，'.join(f'{k} {v:.0%}' for k, v in f['段级诊断'].items())})")
+    if "曲线CNN单独判别" in f:
+        cnn = f["曲线CNN单独判别"]
+        print(f"  曲线CNN单独判别: {max(cnn, key=cnn.get)} "
+              f"({'，'.join(f'{k} {v:.0%}' for k, v in cnn.items())})")
     print(f"  Tier1 步级告警: {f['Tier1 步级告警'] or '无'}")
     print(f"  Tier2 一致性异常: {f['Tier2 一致性异常'] or '无'}")
     if diag != "normal" and not f["Tier1 步级告警"] and not f["Tier2 一致性异常"]:
@@ -233,7 +272,7 @@ def print_pack_report(out: dict, chem: str, mode: str) -> None:
     if out["t1_events"]:
         for e in out["t1_events"][:8]:
             print(f"    [{e['rule']}] 步 {e['start']}–{e['end']} (峰值 {e['peak']:.3f})")
-    print("  判别依据: 两级告警（阈值见 results/metrics/chbatterygen_alarm.json）+ XGBoost 段级四分类")
+    print("  判别依据: 两级告警（阈值见 results/metrics/chbatterygen_alarm.json）+ XGBoost 统计特征 ⊕ 曲线热图融合 CNN（充电段）")
 
 
 def main() -> None:

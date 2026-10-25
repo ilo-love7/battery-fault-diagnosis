@@ -1,0 +1,37 @@
+{
+  "discharge_deepest_base0": {
+    "n": 96,
+    "top1": 0.6145833333333334,
+    "top3": 0.6354166666666666
+  },
+  "discharge_deepest_base1": {
+    "n": 92,
+    "top1": 0.010869565217391304,
+    "top3": 0.08695652173913043
+  },
+  "charge_deepest_base0": {
+    "n": 96,
+    "top1": 0.19791666666666666,
+    "top3": 0.2708333333333333
+  },
+  "discharge_highest_base0": {
+    "n": 96,
+    "top1": 0.15625,
+    "top3": 0.20833333333333334
+  },
+  "charge_highest_base0": {
+    "n": 96,
+    "top1": 0.4375,
+    "top3": 0.46875
+  },
+  "discharge_deepest_full_base0": {
+    "n": 96,
+    "top1": 0.59375,
+    "top3": 0.6458333333333334
+  },
+  "bidirectional_base0": {
+    "n": 96,
+    "top1": 0.40625,
+    "top3": 0.4375
+  }
+}

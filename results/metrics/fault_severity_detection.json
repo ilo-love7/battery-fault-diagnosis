@@ -1,0 +1,44 @@
+{
+  "High Resistance": {
+    "Mild": {
+      "n": 10,
+      "alarm_rate": 1.0
+    },
+    "Moderate": {
+      "n": 16,
+      "alarm_rate": 1.0
+    },
+    "Severe": {
+      "n": 4,
+      "alarm_rate": 1.0
+    }
+  },
+  "Low Capacity": {
+    "Mild": {
+      "n": 10,
+      "alarm_rate": 0.4
+    },
+    "Moderate": {
+      "n": 10,
+      "alarm_rate": 0.6
+    },
+    "Severe": {
+      "n": 10,
+      "alarm_rate": 0.6
+    }
+  },
+  "Self-discharge": {
+    "Mild": {
+      "n": 32,
+      "alarm_rate": 0.25
+    },
+    "Moderate": {
+      "n": 4,
+      "alarm_rate": 0.0
+    },
+    "Severe": {
+      "n": 4,
+      "alarm_rate": 0.75
+    }
+  }
+}

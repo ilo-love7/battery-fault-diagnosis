@@ -1,0 +1,39 @@
+{
+  "model": "xgb_vehicle_features",
+  "cv": "5fold_stratified_oof",
+  "n": 100,
+  "accuracy": 0.58,
+  "weighted_f1": 0.567315541906391,
+  "majority_baseline": 0.52,
+  "confusion_rows_true_012": [
+    [
+      41,
+      7,
+      4
+    ],
+    [
+      9,
+      14,
+      7
+    ],
+    [
+      7,
+      8,
+      3
+    ]
+  ],
+  "per_type": {
+    "High Resistance": {
+      "n": 30,
+      "accuracy": 0.5666666666666667
+    },
+    "Low Capacity": {
+      "n": 30,
+      "accuracy": 0.3
+    },
+    "Self-discharge": {
+      "n": 40,
+      "accuracy": 0.8
+    }
+  }
+}

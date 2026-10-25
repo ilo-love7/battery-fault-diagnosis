@@ -43,6 +43,5 @@
   "model": "xgb_stats_shape",
   "split": "charge_vehicle_grouped_8_2",
   "n_train": 448,
-  "n_test": 112,
-  "metadata_note": "n_train/n_test 由划分确定性修正（te.sum() 索引和 bug）；划分 448/112 对任意同 seed 重跑不变"
+  "n_test": 112
 }
