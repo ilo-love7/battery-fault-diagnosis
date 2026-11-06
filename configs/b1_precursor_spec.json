@@ -1,0 +1,64 @@
+{
+ "source": "B1 v1.6 · results/ndprobe/nd_probe.json",
+ "target": "A1 v1.3 · src/evfd/alarm/thresholds.py",
+ "generated_by": "b1-aging-attribution/src/to_a1.py",
+ "reference_temp_C": 45.0,
+ "rest_days": 7.0,
+ "ea_over_R_K": 6599.9,
+ "ea_kJ_per_mol": 54.9,
+ "notes": [
+  "两点（25/45 ℃）外推，只有量级意义；换体系必须重测两个温度。",
+  "漂移定义：dV = V(7d) - V(1d)，同一 SOC、同一温度、静置段无充电事件。",
+  "阈值取标称值的 80%（不是统计分位数）——它是物理兜底，主判据仍由 A1 在健康段定标。"
+ ],
+ "precursors": [
+  {
+   "name": "ALM_B1_OCV_DRIFT",
+   "column": "ocv_drift_45c_mv",
+   "direction": "low",
+   "kind": "hard",
+   "threshold": -1.425,
+   "unit": "mV",
+   "nominal_mV": -1.781,
+   "nominal_at_25C_mV": -0.443,
+   "threshold_at_25C": -0.354,
+   "sigma_mV": 0.05,
+   "snr_D_SEI": 24.9,
+   "elasticity": {
+    "D_SEI": 1.0083,
+    "j0_n": -0.0688
+   },
+   "feature_formula": "ocv_drift_mv = 1000 * (V_rest(t0 + 7d) - V_rest(t0)); 再用 Arrhenius 归一：ocv_drift_45c_mv = ocv_drift_mv * exp(-Ea/R * (1/318.15 - 1/T_rest_K))",
+   "preconditions": [
+    "静置段 ≥ 7 天，前后 SOC 差 ≤ 2%",
+    "温度波动 ≤ 1 K（否则漂移被温度系数淹没）",
+    "静置段内无充电/放电事件"
+   ],
+   "a1_mapping": {
+    "Rule": {
+     "name": "ALM_B1_OCV_DRIFT",
+     "column": "ocv_drift_45c_mv",
+     "direction": "low",
+     "threshold": -1.425,
+     "kind": "hard"
+    },
+    "requires_new_feature": true
+   },
+   "source_conclusion": "B1 v1.5：单个静置探针把占比区间 15.76 → 9.38 pp，且免拆芯"
+  }
+ ],
+ "not_delivered": [
+  {
+   "item": "SEI 厚度",
+   "reason": "需拆芯，车端不可用（B1 v1.4，11.14 pp）"
+  },
+  {
+   "item": "充电末端电压拐点",
+   "reason": "B1 未做弹性/可辨识性分析，不硬凑阈值"
+  },
+  {
+   "item": "库仑效率",
+   "reason": "CC-CV 下恒压段把电荷补回来，1−CE 恒为 0 ± 3 ppm（B1 v1.5 判死刑）"
+  }
+ ]
+}

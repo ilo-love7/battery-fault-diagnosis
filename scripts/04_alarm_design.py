@@ -20,6 +20,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from evfd.alarm.b1_bridge import extra_hard_rules
 from evfd.alarm.thresholds import (
     design_thresholds,
     evaluate_alarm_performance,
@@ -66,6 +67,12 @@ def main() -> None:
     h_start, h_end, _ = md.blocks[0]
     healthy = df.iloc[h_start:h_end]
 
+    # B1 析锂前兆（可选）。默认关闭；若数据没有 ≥7 天静置段会自动跳过并打印原因，
+    # 不会给 run_alarms 喂 NaN 列。详见 src/evfd/alarm/b1_bridge.py 的模块注释。
+    b1_rules = extra_hard_rules(
+        df, acfg, time_col=(acfg.get("b1_precursors") or {}).get("time_col", "t_h")
+    )
+
     results = {}
     ts_main = None
     events_main = None
@@ -77,7 +84,8 @@ def main() -> None:
         else:
             calib = healthy.iloc[: int(len(healthy) * 0.6)]
         ts = design_thresholds(
-            calib, SPECS, quantile=acfg["healthy_quantile"], hard_rules=make_hard(acfg)
+            calib, SPECS, quantile=acfg["healthy_quantile"],
+            hard_rules=make_hard(acfg) + b1_rules,
         )
         df_res, events = run_alarms(
             df, ts, persistence=acfg["persistence"], cooldown=acfg["cooldown"]

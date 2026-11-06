@@ -43,6 +43,20 @@ alarm:
   persistence: 3                   # 连续 N 步越限才触发告警（抗单点抖动）
   cooldown: 10                     # 同一告警类型触发后 N 步冷却，避免重复计数
 
+  # B1 析锂前兆桥接（src/evfd/alarm/b1_bridge.py）
+  # 规格来自 B1 v1.6 交付物：45 ℃ 静置 7 天的 OCV 漂移，标称 -1.781 mV，
+  # 硬阈值取标称 80% = -1.425 mV（物理兜底，不是健康段分位数）。
+  # 关闭原因：A1 现有两个数据集都没有 ≥7 天静置段——Mendeley 只有行序无时间戳，
+  # CH-BatteryGen 每段 ≤400 行 / 10 s 采样 ≈ 66 min。缺静置段时特征无定义，
+  # b1_bridge.applicable() 会拦住并给出原因，不会产生 NaN 列。
+  # 打开条件：数据自带时间列（t_h，小时）且存在 ≥7 天静置段（实车停车段 / A2 静置标定）。
+  b1_precursors:
+    enabled: false
+    spec_path: "configs/b1_precursor_spec.json"   # 相对路径以仓库根为基准
+    rest_days: 7.0
+    time_col: "t_h"                # 打开时必须提供：小时为单位的时间列
+    max_age_days: null             # 前兆估计的有效期（天）；null = 直到下次静置标定
+
 deep_model:
   window: 16          # 滑窗长度（步）
   stride: 1
