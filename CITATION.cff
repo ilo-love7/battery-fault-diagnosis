@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below and also cite the datasets you use."
+title: "battery-fault-diagnosis: on-board internal short-circuit / over-discharge detection and alarming"
+abstract: >-
+  A progressive fault classification and alarm pipeline for on-board BMS:
+  healthy / over-discharge / internal short-circuit from voltage and
+  temperature time series. Random forest to XGBoost to dilated causal
+  convolution (dcnn64, 100% on the time-ordered protocol), PSI input-drift
+  monitoring, quantile-envelope alarm design with physics hard rules,
+  fault-cell localisation and severity grading, and a runnable CLI tool.
+version: 1.4.0
+date-released: 2026-11-05
+license: MIT
+repository-code: "https://github.com/ilo-love7/battery-fault-diagnosis"
+keywords:
+  - battery
+  - fault-diagnosis
+  - internal-short-circuit
+  - over-discharge
+  - BMS
+  - alarm
+  - electric-vehicle
+authors:
+  - name: "ilo-love7"
+references:
+  - type: dataset
+    title: "EV Lithium Ion Battery Fault Diagnosis Dataset"
+    doi: "10.17632/t42ynjk936"
+    year: 2023
+    license: "CC-BY-4.0"
